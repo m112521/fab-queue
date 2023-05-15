@@ -7,31 +7,31 @@
     <button onclick="submitHandler()">Add session</button>
     <button onclick="getAllSessions()">Get all sessions</button>
 
-<script type="text/javascript">
-    let user = {
-            filename: "test.gcode",
-            username: "Pablo",
-            duration: 120,
-            machine: 0
-    }
+    <script type="text/javascript">
+        let user = {
+                filename: "test.gcode",
+                username: "Pablo",
+                duration: 120,
+                machine: 0
+        }
 
-    const submitHandler = (e) => {
-        fetch("http://127.0.0.1:8000/add-session-db", 
-        {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify(user)
-        })
-        .then(response => response.json())
-        .then(data => console.log(data)); //data[0]
-    }
+        const submitHandler = (e) => {
+            fetch("http://127.0.0.1:8000/add-session-related", 
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify(user)
+            })
+            .then(response => response.json())
+            .then(data => console.log(data)); //data[0]
+        }
 
-    const getAllSessions = (e) => {
-        fetch("http://127.0.0.1:8000/all")
-        .then(response => response.json())
-        .then(data => console.log(data));
-    }
+        // const getAllSessions = (e) => {
+        //     fetch("http://127.0.0.1:8000/all")
+        //     .then(response => response.json())
+        //     .then(data => console.log(data));
+        // }
 
-</script>
+    </script>
 </body>
 </html>

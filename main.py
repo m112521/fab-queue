@@ -4,7 +4,7 @@ import json
 
 from fastapi.middleware.cors import CORSMiddleware
 from QSession import QueueSession
-from DataModels import SessionItem, QSession
+from DataModels import SessionItem, QSession, QUser, QMachine
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 engine = create_engine("sqlite:///database.db")
@@ -12,6 +12,7 @@ SQLModel.metadata.create_all(engine)
 
 app = FastAPI()
 # Text file I/O: txt, json
+# User -> Queue -> Machine
 
 app.add_middleware(
     CORSMiddleware,
@@ -57,6 +58,19 @@ async def add_to_db(item: SessionItem):
     qs = QSession(username=item.username, filename=item.filename, duration=item.duration, machine_id = item.machine)
     
     with Session(engine) as session:
+        session.add(qs)
+        session.commit()
+
+    return item
+
+@app.post("/add-session-related")
+async def add_related_db(item: SessionItem):
+    print("YOYOOOYOOYOYOY")
+    with Session(engine) as session:
+        qu = QUser(username="petya", fullname="Petr Ivanov", year=1)
+        qm = QMachine(name="UM2", workarea="200x200x200")
+        qs = QSession(filename="test.gcode", duration=120, quser=qu, qmachine=qm)
+
         session.add(qs)
         session.commit()
 
