@@ -7,7 +7,14 @@
     <button onclick="submitHandler()">Add session</button>
     <button onclick="getAllSessions()">Get all sessions</button>
 
+    <div class="queue-container">
+        <div class="queue-item">
+            <p>Alex Petrov | PRUSA MK3S | 120min | 1 year</p>
+        </div>
+    </div>
+
     <script type="text/javascript">
+        let queueDiv = document.querySelector(".queue-container");
         let user = {
                 filename: "test.gcode",
                 username: "Pablo",
@@ -23,14 +30,25 @@
                 body: JSON.stringify(user)
             })
             .then(response => response.json())
-            .then(data => console.log(data)); //data[0]
+            .then(data => {
+                console.log(data)
+            });  
         }
 
-        // const getAllSessions = (e) => {
-        //     fetch("http://127.0.0.1:8000/all")
-        //     .then(response => response.json())
-        //     .then(data => console.log(data));
-        // }
+        const getAllSessions = (e) => {
+            fetch("http://127.0.0.1:8000/all")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                for (let item of data) {
+                    let queueItem = document.createElement('div');
+                    queueItem.setAttribute('class', 'queue-item');
+                    queueItem.textContent = `${item.username} | ${item.filename} | ${item.duration} | ${item.machine}`;
+                    queueDiv.appendChild(queueItem);
+                }
+            }); 
+        }
 
     </script>
 </body>

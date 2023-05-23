@@ -82,7 +82,7 @@ async def get_all_sessions():
     json_sessions = []
     with Session(engine) as session:
         sessions = session.exec(select(QSession)) 
-        json_sessions = [{"username": s.username, "filename": s.filename, "duration": s.duration, "machine_id": s.machine_id} for s in sessions]
+        json_sessions = [{"username": s.user_id, "filename": s.filename, "duration": s.duration, "machine_id": s.machine_id} for s in sessions]
 
     print(json_sessions)
     return json_sessions
