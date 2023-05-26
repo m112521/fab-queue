@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Union
 from fastapi import FastAPI
 import json
@@ -63,13 +64,13 @@ async def add_to_db(item: SessionItem):
 
     return item
 
+
 @app.post("/add-session-related")
-async def add_related_db(item: SessionItem):
-    print("YOYOOOYOOYOYOY")
+async def add_related_db(item: QSession):
     with Session(engine) as session:
-        qu = QUser(username="petya", fullname="Petr Ivanov", year=1)
-        qm = QMachine(name="UM2", workarea="200x200x200")
-        qs = QSession(filename="test.gcode", duration=120, quser=qu, qmachine=qm)
+        qu = QUser(username="Peter", fullname="Rojer", year="2")
+        qm = QMachine(name="PRUSA", workarea="200x200x200")
+        qs = QSession(filename=item.filename, duration=item.duration, start=item.start, quser=qu, qmachine=qm) # start=datetime.now()
 
         session.add(qs)
         session.commit()
@@ -86,3 +87,15 @@ async def get_all_sessions():
 
     print(json_sessions)
     return json_sessions
+
+
+@app.get("/select-by-machine/{machine_id}")
+async def get_sessions_by_machine(machine_id: int):
+    json_sessions = []
+    with Session(engine) as session:
+        statement = select(QSession).where(QSession.machine_id == machine_id)
+        sessions = session.exec(statement)
+        json_sessions = [{"username": s.quser.username, "filename": s.filename, "duration": s.duration, "machine": s.qmachine.name} for s in sessions]
+
+    return json_sessions
+

@@ -7,6 +7,9 @@
     <button onclick="submitHandler()">Add session</button>
     <button onclick="getAllSessions()">Get all sessions</button>
 
+
+    <input type="text" id="machine-id"><button onclick="getSessionsByMachine()">Get sessions by machine_id</button>
+
     <div class="queue-container">
         <div class="queue-item">
             <p>Alex Petrov | PRUSA MK3S | 120min | 1 year</p>
@@ -14,16 +17,20 @@
     </div>
 
     <script type="text/javascript">
+
+        const SERVER_URL = "http://127.0.0.1:8000";
+
         let queueDiv = document.querySelector(".queue-container");
         let user = {
                 filename: "test.gcode",
-                username: "Pablo",
                 duration: 120,
-                machine: 0
+                machine_id: 2,
+                user_id: 1,
+                start: Date.now()
         }
 
         const submitHandler = (e) => {
-            fetch("http://127.0.0.1:8000/add-session-related", 
+            fetch(`${SERVER_URL}/add-session-related`, 
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'}, 
@@ -36,7 +43,7 @@
         }
 
         const getAllSessions = (e) => {
-            fetch("http://127.0.0.1:8000/all")
+            fetch(`${SERVER_URL}/all`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -44,10 +51,19 @@
                 for (let item of data) {
                     let queueItem = document.createElement('div');
                     queueItem.setAttribute('class', 'queue-item');
-                    queueItem.textContent = `${item.username} | ${item.filename} | ${item.duration} | ${item.machine}`;
+                    queueItem.textContent = `${item.username} | ${item.filename} | ${item.duration} | ${item.machine_id}`;
                     queueDiv.appendChild(queueItem);
                 }
             }); 
+        }
+
+        const getSessionsByMachine = (e) => {
+            const machineId = document.querySelector("#machine-id").value;
+            fetch(`${SERVER_URL}/select-by-machine/${machineId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
         }
 
     </script>
