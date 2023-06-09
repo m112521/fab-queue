@@ -8,12 +8,15 @@ from QSession import QueueSession
 from DataModels import SessionItem, QSession, QUser, QMachine
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
+# TBD
+# 1. Auth
+# 2. DEL, UPD
+
 engine = create_engine("sqlite:///database.db")
 SQLModel.metadata.create_all(engine)
 
 app = FastAPI()
-# Text file I/O: txt, json
-# User -> Queue -> Machine
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -99,3 +102,14 @@ async def get_sessions_by_machine(machine_id: int):
 
     return json_sessions
 
+
+@app.get("/delete/{id}")
+async def delete_item(id: int):
+    with Session(engine) as session:
+        statement = select(QSession).where(QSession.id == id)
+        results = session.exec(statement)
+        item = results.one()
+        #print("Item deleted: ", item)
+
+        session.delete(item)
+        session.commit()
