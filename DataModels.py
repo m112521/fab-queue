@@ -26,8 +26,9 @@ class QSession(SQLModel, table=True):
 class QUser(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     username: str
-    fullname: str
-    year: int = Field(default=None)
+    fullname: Union[str, None] = None
+    year: Union[int, None] = None
+    disabled: Union[bool, None] = None
 
     qsession: Union[QSession, None] = Relationship(back_populates="quser")
     
@@ -38,3 +39,24 @@ class QMachine(SQLModel, table=True):
     workarea: str
 
     qsession: Union[QSession, None] = Relationship(back_populates="qmachine")
+
+
+
+# Auth-related
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Union[str, None] = None
+
+class User(BaseModel):
+    username: str
+    email: Union[str, None] = None
+    full_name: Union[str, None] = None
+    disabled: Union[bool, None] = None
+
+class UserInDB(User):
+    hashed_password: str
+
